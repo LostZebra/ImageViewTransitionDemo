@@ -13,6 +13,9 @@
 		FFAEBC611AF68B69006E86D4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FFAEBC601AF68B69006E86D4 /* Images.xcassets */; };
 		FFAEBC641AF68B69006E86D4 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = FFAEBC621AF68B69006E86D4 /* LaunchScreen.xib */; };
 		FFAEBC701AF68B69006E86D4 /* ImageTransitionDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAEBC6F1AF68B69006E86D4 /* ImageTransitionDemoTests.swift */; };
+		FFAEBC7D1AF68CA2006E86D4 /* mediate_thumbnail.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FFAEBC7B1AF68CA2006E86D4 /* mediate_thumbnail.jpg */; };
+		FFAEBC7E1AF68CA2006E86D4 /* small_thumbnail.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FFAEBC7C1AF68CA2006E86D4 /* small_thumbnail.jpg */; };
+		FFAEBC801AF693BF006E86D4 /* FullImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAEBC7F1AF693BF006E86D4 /* FullImageController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +39,9 @@
 		FFAEBC691AF68B69006E86D4 /* ImageTransitionDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageTransitionDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFAEBC6E1AF68B69006E86D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FFAEBC6F1AF68B69006E86D4 /* ImageTransitionDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTransitionDemoTests.swift; sourceTree = "<group>"; };
+		FFAEBC7B1AF68CA2006E86D4 /* mediate_thumbnail.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mediate_thumbnail.jpg; sourceTree = "<group>"; };
+		FFAEBC7C1AF68CA2006E86D4 /* small_thumbnail.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small_thumbnail.jpg; sourceTree = "<group>"; };
+		FFAEBC7F1AF693BF006E86D4 /* FullImageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullImageController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,8 +83,10 @@
 		FFAEBC561AF68B69006E86D4 /* ImageTransitionDemo */ = {
 			isa = PBXGroup;
 			children = (
+				FFAEBC7A1AF68C8B006E86D4 /* Images */,
 				FFAEBC591AF68B69006E86D4 /* AppDelegate.swift */,
 				FFAEBC5B1AF68B69006E86D4 /* ViewController.swift */,
+				FFAEBC7F1AF693BF006E86D4 /* FullImageController.swift */,
 				FFAEBC5D1AF68B69006E86D4 /* Main.storyboard */,
 				FFAEBC601AF68B69006E86D4 /* Images.xcassets */,
 				FFAEBC621AF68B69006E86D4 /* LaunchScreen.xib */,
@@ -110,6 +118,15 @@
 				FFAEBC6E1AF68B69006E86D4 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FFAEBC7A1AF68C8B006E86D4 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				FFAEBC7B1AF68CA2006E86D4 /* mediate_thumbnail.jpg */,
+				FFAEBC7C1AF68CA2006E86D4 /* small_thumbnail.jpg */,
+			);
+			path = Images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -192,7 +209,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FFAEBC7D1AF68CA2006E86D4 /* mediate_thumbnail.jpg in Resources */,
 				FFAEBC5F1AF68B69006E86D4 /* Main.storyboard in Resources */,
+				FFAEBC7E1AF68CA2006E86D4 /* small_thumbnail.jpg in Resources */,
 				FFAEBC641AF68B69006E86D4 /* LaunchScreen.xib in Resources */,
 				FFAEBC611AF68B69006E86D4 /* Images.xcassets in Resources */,
 			);
@@ -212,6 +231,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FFAEBC801AF693BF006E86D4 /* FullImageController.swift in Sources */,
 				FFAEBC5C1AF68B69006E86D4 /* ViewController.swift in Sources */,
 				FFAEBC5A1AF68B69006E86D4 /* AppDelegate.swift in Sources */,
 			);
