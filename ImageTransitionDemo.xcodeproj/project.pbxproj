@@ -16,6 +16,7 @@
 		FFAEBC7D1AF68CA2006E86D4 /* mediate_thumbnail.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FFAEBC7B1AF68CA2006E86D4 /* mediate_thumbnail.jpg */; };
 		FFAEBC7E1AF68CA2006E86D4 /* small_thumbnail.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FFAEBC7C1AF68CA2006E86D4 /* small_thumbnail.jpg */; };
 		FFAEBC801AF693BF006E86D4 /* FullImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAEBC7F1AF693BF006E86D4 /* FullImageController.swift */; };
+		FFAEBC831AF6A72C006E86D4 /* Transition.gif in Resources */ = {isa = PBXBuildFile; fileRef = FFAEBC821AF6A72C006E86D4 /* Transition.gif */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +43,7 @@
 		FFAEBC7B1AF68CA2006E86D4 /* mediate_thumbnail.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mediate_thumbnail.jpg; sourceTree = "<group>"; };
 		FFAEBC7C1AF68CA2006E86D4 /* small_thumbnail.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small_thumbnail.jpg; sourceTree = "<group>"; };
 		FFAEBC7F1AF693BF006E86D4 /* FullImageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullImageController.swift; sourceTree = "<group>"; };
+		FFAEBC821AF6A72C006E86D4 /* Transition.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Transition.gif; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +85,7 @@
 		FFAEBC561AF68B69006E86D4 /* ImageTransitionDemo */ = {
 			isa = PBXGroup;
 			children = (
+				FFAEBC811AF6A5F8006E86D4 /* Demo */,
 				FFAEBC7A1AF68C8B006E86D4 /* Images */,
 				FFAEBC591AF68B69006E86D4 /* AppDelegate.swift */,
 				FFAEBC5B1AF68B69006E86D4 /* ViewController.swift */,
@@ -127,6 +130,14 @@
 				FFAEBC7C1AF68CA2006E86D4 /* small_thumbnail.jpg */,
 			);
 			path = Images;
+			sourceTree = "<group>";
+		};
+		FFAEBC811AF6A5F8006E86D4 /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				FFAEBC821AF6A72C006E86D4 /* Transition.gif */,
+			);
+			path = Demo;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -212,6 +223,7 @@
 				FFAEBC7D1AF68CA2006E86D4 /* mediate_thumbnail.jpg in Resources */,
 				FFAEBC5F1AF68B69006E86D4 /* Main.storyboard in Resources */,
 				FFAEBC7E1AF68CA2006E86D4 /* small_thumbnail.jpg in Resources */,
+				FFAEBC831AF6A72C006E86D4 /* Transition.gif in Resources */,
 				FFAEBC641AF68B69006E86D4 /* LaunchScreen.xib in Resources */,
 				FFAEBC611AF68B69006E86D4 /* Images.xcassets in Resources */,
 			);
