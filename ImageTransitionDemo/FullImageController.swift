@@ -12,6 +12,10 @@ protocol FullImageControllerDelegate {
     func fullImageControllerDidDismissed(fullImageView: UIImageView)
 }
 
+protocol ImageScrollViewDelegate {
+    func imageScrollViewDidDismiss(index: Int, imageView: UIImageView)
+}
+
 class FullImageController: UIViewController {
     private var oriFrame: CGRect!
     
