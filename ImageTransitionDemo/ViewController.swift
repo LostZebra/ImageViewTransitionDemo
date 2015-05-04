@@ -14,6 +14,8 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     let defaultLayoutRelation = NSLayoutRelation.Equal
     let layoutAttributeCenterX = NSLayoutAttribute.CenterX
     let layoutAttributeCenterY = NSLayoutAttribute.CenterY
+    let layoutAttributeWidth = NSLayoutAttribute.Width
+    let layoutAttributeHeight = NSLayoutAttribute.Height
     
     private var image: UIImage!
     private var imageView: UIImageView!
@@ -68,8 +70,9 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         constraintsArray.addObject(NSLayoutConstraint(item: imageView, attribute: layoutAttributeCenterY, relatedBy: defaultLayoutRelation, toItem: self.view, attribute: layoutAttributeCenterY, multiplier: 1.0, constant: -180.0))
         constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("H:[imageView(==60)]", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary as [NSObject : AnyObject]))
         constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("V:[imageView(==60)]", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary as [NSObject : AnyObject]))
-        constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("V:[imageView]-120-[imageCollectionView(>=90)]", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary as [NSObject : AnyObject]))
-        constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[imageCollectionView]-0-|", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary as [NSObject : AnyObject]))
+        constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("V:[imageView]-120-[imageCollectionView(>=180)]", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary as [NSObject : AnyObject]))
+        constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[imageCollectionView]", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary as [NSObject : AnyObject]))
+        constraintsArray.addObject(NSLayoutConstraint(item: imageCollectionView, attribute: layoutAttributeWidth, relatedBy: defaultLayoutRelation, toItem: self.view, attribute: layoutAttributeWidth, multiplier: 0.6, constant: 0.0))
         
         self.view.addConstraints(constraintsArray as [AnyObject])
     }
@@ -77,10 +80,10 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     /// Get UICollectionViewFlowLayout
     private func constructCollectionViewLayout() -> UICollectionViewFlowLayout {
         var flowLayout = UICollectionViewFlowLayout()
-        flowLayout.minimumInteritemSpacing = 15.0
-        flowLayout.minimumLineSpacing = 15.0
+        flowLayout.minimumInteritemSpacing = 5.0
+        flowLayout.minimumLineSpacing = 5.0
         flowLayout.itemSize = CGSizeMake(60.0, 60.0)
-        flowLayout.sectionInset = UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0)
+        flowLayout.sectionInset = UIEdgeInsetsMake(5.0, 10.0, 5.0, 10.0)
         
         return flowLayout
     }
@@ -88,6 +91,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     @objc func presentFullImage() {
         var fullImageViewController = FullImageController(image: UIImage(named: "mediate_thumbnail.jpg")!, oriFrame: imageView.frame)
         fullImageViewController.delegate = self
+        
         self.presentViewController(fullImageViewController, animated: false) { () -> Void in
             UIView.animateWithDuration(0.5, animations: { () -> Void in
                 fullImageViewController.fullImageView.layer.transform = self.imageView.getTransform(toViewController: fullImageViewController)
@@ -139,7 +143,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         var selectedItemIndex = indexPath.row
         var imageView = collectionView.cellForItemAtIndexPath(indexPath)
         var imageGallery = ImageGallery(initialIndex: selectedItemIndex, sourceImagesInfo: sourceImagesInfo, targetImages: targetImages)
-        imageGallery.imageScrollViewDelegate = self
+        imageGallery.delegate = self
         
         self.presentViewController(imageGallery, animated: false) { () -> Void in
             UIView.animateWithDuration(0.5, animations: { () -> Void in
@@ -152,39 +156,35 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     
     // MARK: ImageScrollViewDelegate
     
-    func imageScrollViewDidDismiss(index: Int, imageView: UIImageView) {
+    func imageScrollViewDidDismiss(index: Int, imageView: UIImageView, isInitialIndex: Bool) {
+        let tempImage = sourceImagesInfo[index].imageView.image
+        sourceImagesInfo[index].imageView.image = nil
+        sourceImagesInfo[index].imageView.backgroundColor = UIColor.whiteColor()
+        
         UIView.animateWithDuration(0.5, animations: { () -> Void in
-            let transform = imageView.layer.transform
-            imageView.layer.transform = CATransform3DIdentity
-//            imageView.layer.transform = self.sourceImagesInfo[index].imageView.layer.transform
+            imageView.layer.transform = isInitialIndex ? CATransform3DIdentity : imageView.getTransform(self.sourceImagesInfo[index].frame)
             }) { (comleted) -> Void in
                 imageView.removeFromSuperview()
+                self.sourceImagesInfo[index].imageView.image = tempImage
         }
     }
     
     // MARK: FullImageControllerDelegate
     
     func fullImageControllerDidDismissed(fullImageView: UIImageView) {
-        let oriCenter = CGPointMake(CGRectGetMidX(imageView.frame), CGRectGetMidY(imageView.frame))
-        let oriRatio = image.size.width / image.size.height
+        let tempImage = self.imageView.image
+        self.imageView.image = nil
+        self.imageView.backgroundColor = UIColor.whiteColor()
         
-        let screenSize = UIScreen.mainScreen().bounds
-        let screenRatio = screenSize.width / screenSize.height
-        
-        var scaleFactor = screenSize.width / image.size.width
-        
-        let newCenter = CGPointMake(screenSize.width / 2.0, screenSize.height / 2.0)
-        
-        var scaleTransform = CATransform3DScale(CATransform3DIdentity, scaleFactor, scaleFactor, 1.0)
-        var translate = CATransform3DTranslate(scaleTransform, newCenter.x - oriCenter.x, newCenter.y - oriCenter.y, 0.0)
-        
-        self.view.addSubview(fullImageView)
         UIView.animateWithDuration(0.5, animations: { () -> Void in
             fullImageView.layer.transform = self.imageView.layer.transform
         }) { (comleted) -> Void in
             fullImageView.removeFromSuperview()
+            self.imageView.image = tempImage
         }
     }
+    
+    // MARK: Ignore this part
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -207,13 +207,13 @@ extension UIView {
         
         let newCenter = CGPointMake(targetSize.width / 2.0, targetSize.height / 2.0)
         
-        var scaleFactor = targetSize.width / 60.0
+        var scaleFactor = targetSize.width / self.frame.width
         
         var scaleTransform = CATransform3DScale(CATransform3DIdentity, scaleFactor, scaleFactor, 1.0)
         return CATransform3DTranslate(scaleTransform, (newCenter.x - oriCenter.x) / scaleFactor, (newCenter.y - oriCenter.y) / scaleFactor, 0.0)
     }
     
-    /// Get a CATransform3D from source view to target viewcontroller
+    /// Get a CATransform3D from source image in a collectionview to target viewcontroller
     ///
     /// :param: index Index of image tapped
     /// :param: sourceFrame Frame of the source view
@@ -225,17 +225,15 @@ extension UIView {
         
         let newCenter = CGPointMake(targetSize.width / 2.0 + targetSize.width * CGFloat(index), targetSize.height / 2.0)
         
-        var scaleFactor = targetSize.width / 60.0
+        var scaleFactor = targetSize.width / sourceFrame.width
         
         var scaleTransform = CATransform3DScale(CATransform3DIdentity, scaleFactor, scaleFactor, 1.0)
         return CATransform3DTranslate(scaleTransform, (newCenter.x - oriCenter.x) / scaleFactor, (newCenter.y - oriCenter.y) / scaleFactor, 0.0)
     }
 
-    /// Get a CATransform3D from source view to target viewcontroller
+    /// Get a CATransform3D from source frame to target frame
     ///
-    /// :param: index Index of image tapped
-    /// :param: sourceFrame Frame of the source view
-    /// :param: toViewController Target viewcontroller of the transition
+    /// :param: toFrame Target frame
     func getTransform(toFrame: CGRect) -> CATransform3D {
         let oriCenter = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
         
@@ -244,7 +242,6 @@ extension UIView {
         var scaleFactor = toFrame.width / self.frame.width
         
         var scaleTransform = CATransform3DScale(CATransform3DIdentity, scaleFactor, scaleFactor, 1.0)
-        return CATransform3DTranslate(scaleTransform, newCenter.x - oriCenter.x, newCenter.y - oriCenter.y, 0.0)
+        return CATransform3DTranslate(scaleTransform, (newCenter.x - oriCenter.x) / scaleFactor, (newCenter.y - oriCenter.y) / scaleFactor, 0.0)
     }
-
 }

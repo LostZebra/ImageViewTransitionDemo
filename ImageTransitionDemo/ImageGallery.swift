@@ -22,7 +22,7 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
     
     var imageViews: [UIImageView]! = [UIImageView]()
     
-    var imageScrollViewDelegate: ImageScrollViewDelegate!
+    var delegate: ImageScrollViewDelegate!
     
     // Image viewcontroller dismiss delegate
     var viewControllerDismissProtocol: FullImageControllerDelegate!
@@ -137,10 +137,10 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
         
         selectedImageView.frame = CGRectMake(0.0, 0.0, screenSize.width, screenSize.height)
         
-        (self.imageScrollViewDelegate as! UIViewController).view.addSubview(selectedImageView)
+        (self.delegate as! UIViewController).view.addSubview(selectedImageView)
         
         self.dismissViewControllerAnimated(false, completion: { () -> Void in
-            self.imageScrollViewDelegate.imageScrollViewDidDismiss(self.currentIndex, imageView: selectedImageView)
+            self.delegate.imageScrollViewDidDismiss(self.currentIndex, imageView: selectedImageView, isInitialIndex: self.currentIndex == self.initialIndex)
         })
     }
     

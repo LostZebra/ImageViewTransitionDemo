@@ -26,6 +26,8 @@
 		FFAEBC931AF705CD006E86D4 /* 3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FFAEBC8B1AF705CD006E86D4 /* 3.jpg */; };
 		FFAEBC941AF705CD006E86D4 /* 4_mediate.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FFAEBC8C1AF705CD006E86D4 /* 4_mediate.jpg */; };
 		FFAEBC951AF705CD006E86D4 /* 4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FFAEBC8D1AF705CD006E86D4 /* 4.jpg */; };
+		FFAEBC971AF817F8006E86D4 /* TransitionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAEBC961AF817F8006E86D4 /* TransitionProtocol.swift */; };
+		FFAEBC991AF82388006E86D4 /* Transition_ScrollView.gif in Resources */ = {isa = PBXBuildFile; fileRef = FFAEBC981AF82388006E86D4 /* Transition_ScrollView.gif */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +64,8 @@
 		FFAEBC8B1AF705CD006E86D4 /* 3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 3.jpg; sourceTree = "<group>"; };
 		FFAEBC8C1AF705CD006E86D4 /* 4_mediate.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 4_mediate.jpg; sourceTree = "<group>"; };
 		FFAEBC8D1AF705CD006E86D4 /* 4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 4.jpg; sourceTree = "<group>"; };
+		FFAEBC961AF817F8006E86D4 /* TransitionProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransitionProtocol.swift; sourceTree = "<group>"; };
+		FFAEBC981AF82388006E86D4 /* Transition_ScrollView.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Transition_ScrollView.gif; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +113,7 @@
 				FFAEBC5B1AF68B69006E86D4 /* ViewController.swift */,
 				FFAEBC7F1AF693BF006E86D4 /* FullImageController.swift */,
 				FFAEBC841AF6EEC5006E86D4 /* ImageGallery.swift */,
+				FFAEBC961AF817F8006E86D4 /* TransitionProtocol.swift */,
 				FFAEBC5D1AF68B69006E86D4 /* Main.storyboard */,
 				FFAEBC601AF68B69006E86D4 /* Images.xcassets */,
 				FFAEBC621AF68B69006E86D4 /* LaunchScreen.xib */,
@@ -162,6 +167,7 @@
 		FFAEBC811AF6A5F8006E86D4 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				FFAEBC981AF82388006E86D4 /* Transition_ScrollView.gif */,
 				FFAEBC821AF6A72C006E86D4 /* Transition.gif */,
 			);
 			path = Demo;
@@ -252,6 +258,7 @@
 				FFAEBC911AF705CD006E86D4 /* 2.jpg in Resources */,
 				FFAEBC941AF705CD006E86D4 /* 4_mediate.jpg in Resources */,
 				FFAEBC931AF705CD006E86D4 /* 3.jpg in Resources */,
+				FFAEBC991AF82388006E86D4 /* Transition_ScrollView.gif in Resources */,
 				FFAEBC7E1AF68CA2006E86D4 /* small_thumbnail.jpg in Resources */,
 				FFAEBC831AF6A72C006E86D4 /* Transition.gif in Resources */,
 				FFAEBC641AF68B69006E86D4 /* LaunchScreen.xib in Resources */,
@@ -278,6 +285,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FFAEBC971AF817F8006E86D4 /* TransitionProtocol.swift in Sources */,
 				FFAEBC851AF6EEC5006E86D4 /* ImageGallery.swift in Sources */,
 				FFAEBC801AF693BF006E86D4 /* FullImageController.swift in Sources */,
 				FFAEBC5C1AF68B69006E86D4 /* ViewController.swift in Sources */,

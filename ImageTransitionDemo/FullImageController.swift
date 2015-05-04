@@ -8,14 +8,6 @@
 
 import UIKit
 
-protocol FullImageControllerDelegate {
-    func fullImageControllerDidDismissed(fullImageView: UIImageView)
-}
-
-protocol ImageScrollViewDelegate {
-    func imageScrollViewDidDismiss(index: Int, imageView: UIImageView)
-}
-
 class FullImageController: UIViewController {
     private var oriFrame: CGRect!
     
@@ -23,7 +15,7 @@ class FullImageController: UIViewController {
     
     var fullImageView: UIImageView!
     
-    var delegate: FullImageControllerDelegate!
+    var delegate: FullImageControllerDelegate?
 
     init(image: UIImage, oriFrame: CGRect) {
         super.init(nibName: nil, bundle: nil)
@@ -45,8 +37,10 @@ class FullImageController: UIViewController {
     }
     
     @objc private func didDismiss() {
+        (self.delegate as! UIViewController).view.addSubview(self.fullImageView)
+        
         self.dismissViewControllerAnimated(false, completion: { () -> Void in
-            self.delegate.fullImageControllerDidDismissed(self.fullImageView)
+            self.delegate?.fullImageControllerDidDismissed(self.fullImageView)
         })
     }
 
