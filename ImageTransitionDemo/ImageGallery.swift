@@ -16,7 +16,7 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
     private var initialIndex: Int!
     private var currentIndex: Int!
     
-    private var sourceImagesInfo: [(frame: CGRect, description: String, image: UIImageView)]!
+    private var sourceImagesInfo: [(frame: CGRect, description: String, imageView: UIImageView)]!
     private var targetImages: [UIImage]!
     private var targetImageUrls: [NSURL]!
     
@@ -27,10 +27,11 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
     // Image viewcontroller dismiss delegate
     var viewControllerDismissProtocol: FullImageControllerDelegate!
     
-    init(initialIndex: Int, sourceImagesInfo: [(frame: CGRect, description: String, image: UIImageView)], targetImages: [UIImage]) {
+    init(initialIndex: Int, sourceImagesInfo: [(frame: CGRect, description: String, imageView: UIImageView)], targetImages: [UIImage]) {
         super.init(nibName: nil, bundle: nil)
         // Initialization
         self.initialIndex = initialIndex
+        self.currentIndex = initialIndex
         self.sourceImagesInfo = sourceImagesInfo
         self.targetImages = targetImages
     }
@@ -98,7 +99,7 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
             var frame = CGRectMake(i == initialIndex ? screenWidth * CGFloat(i) + sourceImagesInfo[i].frame.origin.x : screenWidth * CGFloat(i), i == initialIndex ? sourceImagesInfo[i].frame.origin.y : 0.0, i == initialIndex ? sourceImagesInfo[i].frame.width : screenWidth, i == initialIndex ? sourceImagesInfo[i].frame.height :screenHeight)
             var imageView = UIImageView(frame: frame)
             imageView.contentMode = UIViewContentMode.ScaleAspectFit;
-            imageView.image = targetImages[i]
+            imageView.image = i != initialIndex ? targetImages[i] : sourceImagesInfo[i].imageView.image
             imageView.userInteractionEnabled = true
             imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("didDismiss")))
             imageViews.append(imageView)
@@ -131,8 +132,15 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
     }
     
     @objc private func didDismiss() {
+        let screenSize = UIScreen.mainScreen().bounds
+        var selectedImageView = self.imageViews[currentIndex]
+        
+        selectedImageView.frame = CGRectMake(0.0, 0.0, screenSize.width, screenSize.height)
+        
+        (self.imageScrollViewDelegate as! UIViewController).view.addSubview(selectedImageView)
+        
         self.dismissViewControllerAnimated(false, completion: { () -> Void in
-            self.imageScrollViewDelegate.imageScrollViewDidDismiss(self.currentIndex, imageView: self.imageViews[self.currentIndex])
+            self.imageScrollViewDelegate.imageScrollViewDidDismiss(self.currentIndex, imageView: selectedImageView)
         })
     }
     

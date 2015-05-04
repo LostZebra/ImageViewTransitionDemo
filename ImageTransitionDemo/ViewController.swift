@@ -19,7 +19,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     private var imageView: UIImageView!
     
     private var imageCollectionView: UICollectionView!
-    private var sourceImagesInfo: [(frame: CGRect, description: String, image: UIImageView)]! = []
+    private var sourceImagesInfo: [(frame: CGRect, description: String, imageView: UIImageView)]! = []
     private var targetImages: [UIImage]! = [UIImage]()
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
@@ -44,7 +44,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
             let mediate_thumbnail = String(i) + "_mediate.jpg"
             let small_thumnail = String(i) + ".jpg"
             targetImages.append(UIImage(named: mediate_thumbnail)!)
-            sourceImagesInfo.append(frame: CGRectZero, description: small_thumnail, image: UIImageView())
+            sourceImagesInfo.append(frame: CGRectZero, description: small_thumnail, imageView: UIImageView())
         }
         // Add image collectionview
         imageCollectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: constructCollectionViewLayout())
@@ -130,7 +130,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         let rect = attributes!.frame
         
         sourceImagesInfo[indexPath.row].frame = CGRectMake(rect.origin.x, imageCollectionView.frame.origin.y + rect.origin.y, rect.width, rect.height)
-        sourceImagesInfo[indexPath.row].image = imageView
+        sourceImagesInfo[indexPath.row].imageView = imageView
         
         return cell
     }
@@ -145,7 +145,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
             UIView.animateWithDuration(0.5, animations: { () -> Void in
                 imageGallery.imageViews[selectedItemIndex].layer.transform = imageView!.getTransform(selectedItemIndex, sourceFrame: self.sourceImagesInfo[selectedItemIndex].frame, toViewController: nil)
                 }, completion: { (completed) -> Void in
-                    // Do nothing
+                    imageGallery.imageViews[selectedItemIndex].image = self.targetImages[selectedItemIndex]
             })
         }
     }
@@ -153,13 +153,10 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     // MARK: ImageScrollViewDelegate
     
     func imageScrollViewDidDismiss(index: Int, imageView: UIImageView) {
-        let screenSize = UIScreen.mainScreen().bounds
-        
-        imageView.frame = CGRectMake(0.0, 0.0, screenSize.width, screenSize.height)
-        
-        self.view.addSubview(imageView)
         UIView.animateWithDuration(0.5, animations: { () -> Void in
-            imageView.layer.transform = self.sourceImagesInfo[index].image.layer.transform
+            let transform = imageView.layer.transform
+            imageView.layer.transform = CATransform3DIdentity
+//            imageView.layer.transform = self.sourceImagesInfo[index].imageView.layer.transform
             }) { (comleted) -> Void in
                 imageView.removeFromSuperview()
         }
@@ -218,6 +215,8 @@ extension UIView {
     
     /// Get a CATransform3D from source view to target viewcontroller
     ///
+    /// :param: index Index of image tapped
+    /// :param: sourceFrame Frame of the source view
     /// :param: toViewController Target viewcontroller of the transition
     func getTransform(index:Int, sourceFrame: CGRect, toViewController to: UIViewController?) -> CATransform3D {
         let targetSize = to == nil ? UIScreen.mainScreen().bounds : to!.view.bounds
@@ -230,6 +229,22 @@ extension UIView {
         
         var scaleTransform = CATransform3DScale(CATransform3DIdentity, scaleFactor, scaleFactor, 1.0)
         return CATransform3DTranslate(scaleTransform, (newCenter.x - oriCenter.x) / scaleFactor, (newCenter.y - oriCenter.y) / scaleFactor, 0.0)
+    }
+
+    /// Get a CATransform3D from source view to target viewcontroller
+    ///
+    /// :param: index Index of image tapped
+    /// :param: sourceFrame Frame of the source view
+    /// :param: toViewController Target viewcontroller of the transition
+    func getTransform(toFrame: CGRect) -> CATransform3D {
+        let oriCenter = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        
+        let newCenter = CGPointMake(CGRectGetMidX(toFrame), CGRectGetMidY(toFrame))
+        
+        var scaleFactor = toFrame.width / self.frame.width
+        
+        var scaleTransform = CATransform3DScale(CATransform3DIdentity, scaleFactor, scaleFactor, 1.0)
+        return CATransform3DTranslate(scaleTransform, newCenter.x - oriCenter.x, newCenter.y - oriCenter.y, 0.0)
     }
 
 }
