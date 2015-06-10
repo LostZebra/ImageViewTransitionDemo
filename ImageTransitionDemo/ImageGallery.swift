@@ -98,8 +98,15 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
     
     /// Load all images, currently only pre-defined images supported
     private func loadImages(initialPresenting: Bool = true) {
-        screenWidth = UIScreen.mainScreen().bounds.width
-        screenHeight = UIScreen.mainScreen().bounds.height
+        if initialPresenting == true {
+            screenWidth = UIScreen.mainScreen().bounds.width
+            screenHeight = UIScreen.mainScreen().bounds.height
+        }
+        else {
+            screenWidth = UIScreen.mainScreen().bounds.height
+            screenHeight = UIScreen.mainScreen().bounds.width
+
+        }
         
         for i in 0..<self.sourceImagesInfo.count {
             var frame: CGRect = CGRectZero
@@ -111,7 +118,7 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
             }
             let imageView = UIImageView(frame: frame)
             imageView.contentMode = UIViewContentMode.ScaleAspectFit;
-            imageView.image = i != initialIndex ? targetImages[i] : sourceImagesInfo[i].imageView.image
+            imageView.image = i != initialIndex && !initialPresenting ? targetImages[i] : sourceImagesInfo[i].imageView.image
             imageView.userInteractionEnabled = true
             imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("didDismiss")))
             imageViews.append(imageView)
@@ -127,16 +134,19 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
         // Do any additional setup after loading the view.
         self.prepareUIElements()
         self.addConstraints()
-        // Scroll to certain index
-        self.imageScrollView.setContentOffset(CGPointMake(UIScreen.mainScreen().bounds.width * CGFloat(initialIndex), 0.0), animated: true)
         // Load images
         self.loadImages()
+        // Scroll to certain index
+        self.imageScrollView.setContentOffset(CGPointMake(screenWidth * CGFloat(initialIndex), 0.0), animated: true)
     }
     
     // MARK: UIScrollViewDelegate
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        currentIndex = lround(Double(scrollView.contentOffset.x / scrollView.frame.size.width))
+        currentIndex = lround(Double(scrollView.contentOffset.x / screenWidth))
+        
+        print(currentIndex)
+        
         if imagePageControl != nil {
             imagePageControl!.currentPage = currentIndex
         }
@@ -158,18 +168,16 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
     
     // MARK: Ignore this part
     
-    override func traitCollectionDidChange(previousTraitCollection: UITraitCollection?) {
-        if previousTraitCollection == nil {
-            return
-        }
-        
-        if previousTraitCollection?.verticalSizeClass != self.traitCollection.verticalSizeClass {
-            for i in 0..<imageViews.count {
-                imageViews[i].removeFromSuperview()
-            }
+    override func willTransitionToTraitCollection(newCollection: UITraitCollection, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        for i in 0..<imageViews.count {
+            imageViews[i].removeFromSuperview()
         }
         
         self.loadImages(false)
+        
+        // Scroll to certain index
+        self.imageScrollView.setContentOffset(CGPointMake(screenWidth * CGFloat(currentIndex), 0.0), animated: true)
+        NSLog("printed from traitCollectionDidChange, %d", currentIndex)
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
