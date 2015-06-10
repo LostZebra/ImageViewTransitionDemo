@@ -13,6 +13,11 @@ class ImageTransitionDemoTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        if #available(iOS 9.0, *) {
+            XCUIApplication().launch()
+        } else {
+            // Fallback on earlier versions
+        }
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
     

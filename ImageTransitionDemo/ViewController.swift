@@ -14,6 +14,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     let defaultLayoutRelation = NSLayoutRelation.Equal
     let layoutAttributeCenterX = NSLayoutAttribute.CenterX
     let layoutAttributeCenterY = NSLayoutAttribute.CenterY
+    let layoutAttributeTop = NSLayoutAttribute.Top
     let layoutAttributeWidth = NSLayoutAttribute.Width
     let layoutAttributeHeight = NSLayoutAttribute.Height
     
@@ -35,7 +36,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         // Do any additional setup after loading the view, typically from a nib.
         image = UIImage(named: "small_thumbnail.jpg")
         imageView = UIImageView(image: image)
-        imageView.setTranslatesAutoresizingMaskIntoConstraints(false)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = UIViewContentMode.ScaleAspectFill
         self.view.addSubview(imageView)
         // Add tap recognizer
@@ -52,7 +53,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         imageCollectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: constructCollectionViewLayout())
         imageCollectionView.backgroundColor = UIColor.whiteColor()
         imageCollectionView.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "CollectionCell")
-        imageCollectionView.setTranslatesAutoresizingMaskIntoConstraints(false)
+        imageCollectionView.translatesAutoresizingMaskIntoConstraints = false
         imageCollectionView.delegate = self
         imageCollectionView.dataSource = self
         self.view.addSubview(imageCollectionView)
@@ -61,35 +62,34 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     }
     
     private func addConstraints() {
-        var viewBindingDictionary = NSMutableDictionary()
-        viewBindingDictionary.setValue(imageView, forKey: "imageView")
-        viewBindingDictionary.setValue(imageCollectionView, forKey: "imageCollectionView")
+        var viewBindingDictionary = [String: AnyObject]()
+        viewBindingDictionary["imageView"] = imageView
+        viewBindingDictionary["imageCollectionView"] = imageCollectionView
 
-        var constraintsArray = NSMutableArray()
-        constraintsArray.addObject(NSLayoutConstraint(item: imageView, attribute: layoutAttributeCenterX, relatedBy: defaultLayoutRelation, toItem: self.view, attribute: layoutAttributeCenterX, multiplier: 1.0, constant: 0.0))
-        constraintsArray.addObject(NSLayoutConstraint(item: imageView, attribute: layoutAttributeCenterY, relatedBy: defaultLayoutRelation, toItem: self.view, attribute: layoutAttributeCenterY, multiplier: 1.0, constant: -180.0))
-        constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("H:[imageView(==60)]", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary as [NSObject : AnyObject]))
-        constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("V:[imageView(==60)]", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary as [NSObject : AnyObject]))
-        constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("V:[imageView]-120-[imageCollectionView(>=180)]", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary as [NSObject : AnyObject]))
-        constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[imageCollectionView]", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary as [NSObject : AnyObject]))
-        constraintsArray.addObject(NSLayoutConstraint(item: imageCollectionView, attribute: layoutAttributeWidth, relatedBy: defaultLayoutRelation, toItem: self.view, attribute: layoutAttributeWidth, multiplier: 0.6, constant: 0.0))
+        var constraintsArray = [NSLayoutConstraint]()
+        constraintsArray.append(NSLayoutConstraint(item: imageView, attribute: layoutAttributeCenterX, relatedBy: defaultLayoutRelation, toItem: self.view, attribute: layoutAttributeCenterX, multiplier: 1.0, constant: 0.0))
+        constraintsArray.append(NSLayoutConstraint(item: imageView, attribute: layoutAttributeTop, relatedBy: defaultLayoutRelation, toItem: self.view, attribute: layoutAttributeTop, multiplier: 1.0, constant:94.0))
+        constraintsArray.extend(NSLayoutConstraint.constraintsWithVisualFormat("H:[imageView(==60)]", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary))
+        constraintsArray.extend(NSLayoutConstraint.constraintsWithVisualFormat("V:[imageView(==60)]", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary))
+        constraintsArray.extend(NSLayoutConstraint.constraintsWithVisualFormat("V:[imageView]-120-[imageCollectionView(>=180)]", options: defaultFormatOption, metrics: nil, views: viewBindingDictionary))
+        constraintsArray.append(NSLayoutConstraint(item: imageCollectionView, attribute: layoutAttributeWidth, relatedBy: defaultLayoutRelation, toItem: self.view, attribute: layoutAttributeWidth, multiplier: 1.0, constant: 0.0))
         
-        self.view.addConstraints(constraintsArray as [AnyObject])
+        self.view.addConstraints(constraintsArray)
     }
     
     /// Get UICollectionViewFlowLayout
     private func constructCollectionViewLayout() -> UICollectionViewFlowLayout {
-        var flowLayout = UICollectionViewFlowLayout()
+        let flowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumInteritemSpacing = 5.0
         flowLayout.minimumLineSpacing = 5.0
         flowLayout.itemSize = CGSizeMake(60.0, 60.0)
-        flowLayout.sectionInset = UIEdgeInsetsMake(5.0, 10.0, 5.0, 10.0)
+        flowLayout.sectionInset = UIEdgeInsetsMake(5.0, 5.0, 5.0, 5.0)
         
         return flowLayout
     }
     
     @objc func presentFullImage() {
-        var fullImageViewController = FullImageController(image: UIImage(named: "mediate_thumbnail.jpg")!, oriFrame: imageView.frame)
+        let fullImageViewController = FullImageController(image: UIImage(named: "mediate_thumbnail.jpg")!, oriFrame: imageView.frame)
         fullImageViewController.delegate = self
         
         self.presentViewController(fullImageViewController, animated: false) { () -> Void in
@@ -116,21 +116,21 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        var cell = collectionView.dequeueReusableCellWithReuseIdentifier("CollectionCell", forIndexPath: indexPath) as! UICollectionViewCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("CollectionCell", forIndexPath: indexPath) as UICollectionViewCell
         
-        var imageView = UIImageView(frame: CGRectMake(0.0, 0.0, 60.0, 60.0))
+        let imageView = UIImageView(frame: CGRectMake(0.0, 0.0, 60.0, 60.0))
         imageView.image = targetImages[indexPath.row]
         imageView.userInteractionEnabled = true
         imageView.contentMode = UIViewContentMode.ScaleAspectFit
         
         cell.addSubview(imageView)
         
-        var tempSuperview = imageView.superview
-        while tempSuperview!.superview != nil {
-            tempSuperview = tempSuperview!.superview
-        }
+//        var tempSuperview = imageView.superview
+//        while tempSuperview!.superview != nil {
+//            tempSuperview = tempSuperview!.superview
+//        }
         
-        var attributes = self.imageCollectionView.layoutAttributesForItemAtIndexPath(indexPath)
+        let attributes = self.imageCollectionView.layoutAttributesForItemAtIndexPath(indexPath)
         let rect = attributes!.frame
         
         sourceImagesInfo[indexPath.row].frame = CGRectMake(rect.origin.x, imageCollectionView.frame.origin.y + rect.origin.y, rect.width, rect.height)
@@ -140,9 +140,9 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        var selectedItemIndex = indexPath.row
-        var imageView = collectionView.cellForItemAtIndexPath(indexPath)
-        var imageGallery = ImageGallery(initialIndex: selectedItemIndex, sourceImagesInfo: sourceImagesInfo, targetImages: targetImages)
+        let selectedItemIndex = indexPath.row
+        let imageView = collectionView.cellForItemAtIndexPath(indexPath)
+        let imageGallery = ImageGallery(initialIndex: selectedItemIndex, sourceImagesInfo: sourceImagesInfo, targetImages: targetImages)
         imageGallery.delegate = self
         
         self.presentViewController(imageGallery, animated: false) { () -> Void in
@@ -185,6 +185,17 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     }
     
     // MARK: Ignore this part
+    
+    override func traitCollectionDidChange(previousTraitCollection: UITraitCollection?) {
+        if previousTraitCollection == nil {
+            return
+        }
+        
+        // Recalculate the frame information of all the subviews in the UICollectionView
+        if previousTraitCollection?.verticalSizeClass != self.traitCollection.verticalSizeClass {
+            self.imageCollectionView.reloadData()
+        }
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -205,11 +216,11 @@ extension UIView {
         
         let oriCenter = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
         
-        let newCenter = CGPointMake(targetSize.width / 2.0, targetSize.height / 2.0)
+        let newCenter = CGPointMake(CGRectGetMidX(targetSize), CGRectGetMidY(targetSize))
         
-        var scaleFactor = targetSize.width / self.frame.width
+        let scaleFactor = self.traitCollection.verticalSizeClass == .Regular ? targetSize.width / self.frame.width : targetSize.height / self.frame.height
         
-        var scaleTransform = CATransform3DScale(CATransform3DIdentity, scaleFactor, scaleFactor, 1.0)
+        let scaleTransform = CATransform3DScale(CATransform3DIdentity, scaleFactor, scaleFactor, 1.0)
         return CATransform3DTranslate(scaleTransform, (newCenter.x - oriCenter.x) / scaleFactor, (newCenter.y - oriCenter.y) / scaleFactor, 0.0)
     }
     
@@ -223,11 +234,11 @@ extension UIView {
         
         let oriCenter = CGPointMake(CGRectGetMidX(sourceFrame) + targetSize.width * CGFloat(index), CGRectGetMidY(sourceFrame))
         
-        let newCenter = CGPointMake(targetSize.width / 2.0 + targetSize.width * CGFloat(index), targetSize.height / 2.0)
+        let newCenter = CGPointMake(CGRectGetMidX(targetSize) + targetSize.width * CGFloat(index), CGRectGetMidY(targetSize))
         
-        var scaleFactor = targetSize.width / sourceFrame.width
+        let scaleFactor = self.traitCollection.verticalSizeClass == .Regular ? targetSize.width / sourceFrame.width : targetSize.height / sourceFrame.height
         
-        var scaleTransform = CATransform3DScale(CATransform3DIdentity, scaleFactor, scaleFactor, 1.0)
+        let scaleTransform = CATransform3DScale(CATransform3DIdentity, scaleFactor, scaleFactor, 1.0)
         return CATransform3DTranslate(scaleTransform, (newCenter.x - oriCenter.x) / scaleFactor, (newCenter.y - oriCenter.y) / scaleFactor, 0.0)
     }
 
@@ -239,9 +250,9 @@ extension UIView {
         
         let newCenter = CGPointMake(CGRectGetMidX(toFrame), CGRectGetMidY(toFrame))
         
-        var scaleFactor = toFrame.width / self.frame.width
+        let scaleFactor = self.traitCollection.verticalSizeClass == .Regular ? toFrame.width / self.frame.width : toFrame.height / self.frame.height
         
-        var scaleTransform = CATransform3DScale(CATransform3DIdentity, scaleFactor, scaleFactor, 1.0)
+        let scaleTransform = CATransform3DScale(CATransform3DIdentity, scaleFactor, scaleFactor, 1.0)
         return CATransform3DTranslate(scaleTransform, (newCenter.x - oriCenter.x) / scaleFactor, (newCenter.y - oriCenter.y) / scaleFactor, 0.0)
     }
 }

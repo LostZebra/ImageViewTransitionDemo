@@ -16,6 +16,9 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
     private var initialIndex: Int!
     private var currentIndex: Int!
     
+    private var screenWidth: CGFloat!
+    private var screenHeight: CGFloat!
+    
     private var sourceImagesInfo: [(frame: CGRect, description: String, imageView: UIImageView)]!
     private var targetImages: [UIImage]!
     private var targetImageUrls: [NSURL]!
@@ -42,20 +45,20 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
         self.view.backgroundColor = UIColor.blackColor()
         // Scrollview for all images
         self.imageScrollView = UIScrollView()
-        self.imageScrollView.setTranslatesAutoresizingMaskIntoConstraints(false)
+        self.imageScrollView.translatesAutoresizingMaskIntoConstraints = false
         self.imageScrollView.pagingEnabled = true
         self.imageScrollView.delegate = self
         // Pagecontroll for image positions
         if sourceImagesInfo.count > 1 {
             self.imagePageControl = UIPageControl()
-            self.imagePageControl!.setTranslatesAutoresizingMaskIntoConstraints(false)
+            self.imagePageControl!.translatesAutoresizingMaskIntoConstraints = false
             self.imagePageControl!.numberOfPages = sourceImagesInfo.count
             self.imagePageControl!.currentPage = initialIndex
             self.imagePageControl!.sizeToFit()
         }
         // Label for image descriptions
         self.descriptionLabel = UILabel()
-        self.descriptionLabel.setTranslatesAutoresizingMaskIntoConstraints(false)
+        self.descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         self.descriptionLabel.backgroundColor = UIColor.clearColor()
         self.descriptionLabel.text = " " + sourceImagesInfo[initialIndex].description
         self.descriptionLabel.textColor = UIColor.whiteColor()
@@ -70,34 +73,43 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
         }
         
         self.imageScrollView.frame = self.view.bounds
-        self.imageScrollView.autoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight
-        
+        self.imageScrollView.autoresizingMask = UIViewAutoresizing(rawValue: UIViewAutoresizing.FlexibleHeight.rawValue | UIViewAutoresizing.FlexibleWidth.rawValue)
         // Add constraints
-        let defaultLayoutFormat = NSLayoutFormatOptions(0)
+        let defaultLayoutFormat = NSLayoutFormatOptions(rawValue: 0)
         let defaultLayoutRelation = NSLayoutRelation.Equal
         let layoutAttributeCenterX = NSLayoutAttribute.CenterX
         
-        var viewBindingDict = NSMutableDictionary()
-        viewBindingDict.setValue(imagePageControl, forKey: "imagePageControl")
-        viewBindingDict.setValue(descriptionLabel, forKey: "descriptionLabel")
-        var constraintsArray = NSMutableArray()
-        constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[descriptionLabel]-0-|", options: defaultLayoutFormat, metrics: nil, views: viewBindingDict as [NSObject : AnyObject]))
-        constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("V:[descriptionLabel(==40)]-0-|", options: defaultLayoutFormat, metrics: nil, views: viewBindingDict as [NSObject : AnyObject]))
+//        var scaleFactor = UIScreen.mainScreen().scale
+        
+        var viewBindingDict = [String: AnyObject]()
+        viewBindingDict["imagePageControl"] = imagePageControl
+        viewBindingDict["descriptionLabel"] = descriptionLabel
+        
+        var constraintsArray = [NSLayoutConstraint]()
+        constraintsArray.extend(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[descriptionLabel]-0-|", options: defaultLayoutFormat, metrics: nil, views: viewBindingDict))
+        constraintsArray.extend(NSLayoutConstraint.constraintsWithVisualFormat("V:[descriptionLabel(==40)]-0-|", options: defaultLayoutFormat, metrics: nil, views: viewBindingDict))
         if imagePageControl != nil {
-            constraintsArray.addObjectsFromArray(NSLayoutConstraint.constraintsWithVisualFormat("V:[imagePageControl]-10-[descriptionLabel]", options: defaultLayoutFormat, metrics: nil, views: viewBindingDict as [NSObject : AnyObject]))
-            constraintsArray.addObject(NSLayoutConstraint(item: imagePageControl!, attribute: layoutAttributeCenterX, relatedBy: defaultLayoutRelation, toItem: self.view, attribute: layoutAttributeCenterX, multiplier: 1.0, constant: 0.0))
+            constraintsArray.extend(NSLayoutConstraint.constraintsWithVisualFormat("V:[imagePageControl]-10-[descriptionLabel]", options: defaultLayoutFormat, metrics: nil, views: viewBindingDict))
+            constraintsArray.append(NSLayoutConstraint(item: imagePageControl!, attribute: layoutAttributeCenterX, relatedBy: defaultLayoutRelation, toItem: self.view, attribute: layoutAttributeCenterX, multiplier: 1.0, constant: 0.0))
         }
-        self.view.addConstraints(constraintsArray as [AnyObject])
+        
+        self.view.addConstraints(constraintsArray)
     }
     
     /// Load all images, currently only pre-defined images supported
-    private func loadImages() {
-        let screenWidth = UIScreen.mainScreen().bounds.width
-        let screenHeight = UIScreen.mainScreen().bounds.height
+    private func loadImages(initialPresenting: Bool = true) {
+        screenWidth = UIScreen.mainScreen().bounds.width
+        screenHeight = UIScreen.mainScreen().bounds.height
         
         for i in 0..<self.sourceImagesInfo.count {
-            var frame = CGRectMake(i == initialIndex ? screenWidth * CGFloat(i) + sourceImagesInfo[i].frame.origin.x : screenWidth * CGFloat(i), i == initialIndex ? sourceImagesInfo[i].frame.origin.y : 0.0, i == initialIndex ? sourceImagesInfo[i].frame.width : screenWidth, i == initialIndex ? sourceImagesInfo[i].frame.height :screenHeight)
-            var imageView = UIImageView(frame: frame)
+            var frame: CGRect = CGRectZero
+            if (i == initialIndex && initialPresenting) {
+                frame = CGRectMake(screenWidth * CGFloat(i) + sourceImagesInfo[i].frame.origin.x, sourceImagesInfo[i].frame.origin.y, sourceImagesInfo[i].frame.width, sourceImagesInfo[i].frame.height)
+            }
+            else {
+                frame = CGRectMake(screenWidth * CGFloat(i), 0.0, screenWidth, screenHeight)
+            }
+            let imageView = UIImageView(frame: frame)
             imageView.contentMode = UIViewContentMode.ScaleAspectFit;
             imageView.image = i != initialIndex ? targetImages[i] : sourceImagesInfo[i].imageView.image
             imageView.userInteractionEnabled = true
@@ -111,7 +123,7 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.setNeedsStatusBarAppearanceUpdate()
         // Do any additional setup after loading the view.
         self.prepareUIElements()
         self.addConstraints()
@@ -133,7 +145,7 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
     
     @objc private func didDismiss() {
         let screenSize = UIScreen.mainScreen().bounds
-        var selectedImageView = self.imageViews[currentIndex]
+        let selectedImageView = self.imageViews[currentIndex]
         
         selectedImageView.frame = CGRectMake(0.0, 0.0, screenSize.width, screenSize.height)
         
@@ -145,6 +157,24 @@ class ImageGallery: UIViewController, UIScrollViewDelegate {
     }
     
     // MARK: Ignore this part
+    
+    override func traitCollectionDidChange(previousTraitCollection: UITraitCollection?) {
+        if previousTraitCollection == nil {
+            return
+        }
+        
+        if previousTraitCollection?.verticalSizeClass != self.traitCollection.verticalSizeClass {
+            for i in 0..<imageViews.count {
+                imageViews[i].removeFromSuperview()
+            }
+        }
+        
+        self.loadImages(false)
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
+    }
     
     required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
